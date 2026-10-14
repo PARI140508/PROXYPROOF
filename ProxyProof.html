@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ProxyProof</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--card:#fff;--ink:#1b1740;--mut:#6c6a8f;--line:#e4e2f6;--pri:#5b3df5;--pris:#ebe7ff;--ok:#12a578;--oks:#d9f6ec;--bad:#e5384f;--bads:#fde4e8;--g1:#5b3df5;--g2:#ff5d8f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#110e2b;--card:#1c1840;--ink:#efedff;--mut:#a09dc8;--line:#2e2a5c;--pri:#8c78ff;--pris:#2b2563;--ok:#3ad3a2;--oks:#123d33;--bad:#ff7088;--bads:#471e2b}}
+:root[data-theme="dark"]{--bg:#110e2b;--card:#1c1840;--ink:#efedff;--mut:#a09dc8;--line:#2e2a5c;--pri:#8c78ff;--pris:#2b2563;--ok:#3ad3a2;--oks:#123d33;--bad:#ff7088;--bads:#471e2b}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:500 15px/1.45 Outfit,system-ui,sans-serif}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em}
+#app{max-width:480px;margin:0 auto;min-height:100vh}
+.hd{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;padding:18px 20px 70px;border-radius:0 0 32px 32px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:22px;display:flex;gap:9px;align-items:center}
+.logo i{width:24px;height:24px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 5px #ffffff40}
+.hd .mut{color:#ffffffcc}.hd button{background:#ffffff30;color:#fff}
+main{padding:0 16px 100px;margin-top:-52px}
+.card{background:var(--card);border-radius:24px;padding:18px;margin:12px 0;box-shadow:0 8px 24px #3a2ea81a}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.mut{color:var(--mut);font-size:13px}
+input,select{width:100%;padding:13px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin:6px 0 12px}
+label{font-size:13px;color:var(--mut);font-weight:600}
+button{font:700 15px Outfit,sans-serif;border:0;border-radius:14px;padding:13px 18px;background:var(--pri);color:#fff;cursor:pointer}
+button.g{background:var(--pris);color:var(--pri)}button.r{background:var(--bads);color:var(--bad)}button.s{padding:7px 12px;font-size:13px;border-radius:10px}button.w{width:100%}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px))}
+nav div{max-width:456px;width:100%;display:flex;background:var(--card);border-radius:22px;padding:6px;box-shadow:0 8px 30px #2a1f8a33}
+nav button{flex:1;background:none;color:var(--mut);padding:11px 2px;font-size:13px;border-radius:16px}
+nav button.on{background:var(--pri);color:#fff}
+.pill{padding:3px 11px;border-radius:99px;font-size:12px;font-weight:700;background:var(--pris);color:var(--pri);white-space:nowrap}
+.pill.ok{background:var(--oks);color:var(--ok)}.pill.bad{background:var(--bads);color:var(--bad)}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.who{display:flex;gap:11px;align-items:center}
+.radar{position:relative;height:200px;display:grid;place-items:center}
+.radar b{position:absolute;border-radius:50%;border:3px solid var(--pri);opacity:0}
+.radar.on b{animation:ping 3s infinite}.radar b:nth-child(2){animation-delay:1s}.radar b:nth-child(3){animation-delay:2s}
+@keyframes ping{0%{width:50px;height:50px;opacity:.7}100%{width:200px;height:200px;opacity:0}}
+@media (prefers-reduced-motion:reduce){.radar.on b{animation:none;width:150px;height:150px;opacity:.25}}
+.core{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;display:grid;place-items:center;font-weight:800;z-index:1}
+.core.ok{background:var(--ok)}.core.bad{background:var(--bad)}.core.off{background:var(--mut)}
+.tok{font-weight:800;font-size:40px;letter-spacing:.16em;text-align:center;font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g1),var(--g2));transition:width 1s linear}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--line)}.li:last-child{border:0}
+.big{font-weight:800;font-size:60px;line-height:1}
+.tabs{display:flex;gap:6px;background:var(--bg);padding:5px;border-radius:16px;margin-bottom:14px}.tabs button{flex:1;background:none;color:var(--mut)}.tabs button.on{background:var(--card);color:var(--ink)}
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:14px;z-index:9;opacity:0;pointer-events:none;transition:.2s;max-width:90%}
+#toast.s{opacity:1}
+textarea{width:100%;height:170px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:12px monospace;padding:10px;margin-bottom:10px}
+</style></head><body>
+<div id="app"><div class="hd"><div class="logo"><i></i>ProxyProof</div><div id="who"></div></div><main id="v"></main></div>
+<div id="nav"></div><div id="toast"></div>
+<script>
+const $=s=>$d.querySelector(s),$d=document,TH=-70,ROT=5000;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789',rnd=n=>Array.from({length:n},()=>A[Math.random()*A.length|0]).join('');
+const H=s=>{let a=3735928559,b=1103547991;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^a>>>16,2246822507)^Math.imul(b^b>>>13,3266489909);return(a>>>0).toString(36)};
+const ls=(k,v)=>{try{if(v===undefined)return sessionStorage.getItem(k);v===null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}};
+const lc=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch(e){}};
+let db,U={},SES={},MK={},RQ={},ready=0,DEV=ls('pp_dev')||lc('pp_dev')||'dev-'+rnd(6),me=ls('pp_me'),tab,dist=3,mode='up',LOG=[],oldT=[],busy=0,labU='';
+ls('pp_dev',DEV);lc('pp_dev',DEV);
+/* each tab is its own phone: a duplicated tab copies sessionStorage, so give it a fresh device id */
+const bc=window.BroadcastChannel?new BroadcastChannel('pp'):null;
+if(bc){bc.fresh=1;bc.onmessage=e=>{if(e.data=='who:'+DEV&&!bc.fresh)bc.postMessage('has:'+DEV);if(e.data=='has:'+DEV&&bc.fresh){DEV='dev-'+rnd(6);me=null;ls('pp_dev',DEV);lc('pp_dev',DEV);ls('pp_me',null);if(ready)draw()}};bc.postMessage('who:'+DEV);setTimeout(()=>bc.fresh=0,1500)}
+const toast=m=>{const t=$('#toast');t.textContent=m;t.className='s';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
+const fmt=ms=>{ms=Math.max(0,ms/1000|0);return(ms/60|0)+':'+String(ms%60).padStart(2,'0')};
+const rssi=d=>Math.round(-45-25*Math.log10(Math.max(d,1)));
+const stus=()=>Object.values(U).filter(u=>u.role=='stu'),me_=()=>U[me];
+const act=()=>Object.values(SES).find(s=>s.active&&Date.now()<s.end);
+const closed=()=>Object.values(SES).filter(s=>!(s.active&&Date.now()<s.end)).sort((a,b)=>a.start-b.start);
+const marksOf=sid=>{const o={};Object.values(MK).forEach(m=>{if(m.sid==sid)o[m.uid]=m});return o};
+const pct=id=>{const c=closed();return c.length?Math.round(100*c.filter(s=>MK[s.id+'_'+id]).length/c.length):0};
+const av=n=>`<span class=av style="background:hsl(${(H(n).charCodeAt(0)*47)%360} 60% 50%)">${esc((n||'?')[0].toUpperCase())}</span>`;
+const W=(p,d)=>db.doc(p).set(d).catch(()=>toast('Could not save. Check your connection.'));
+
+async function init(){
+ try{db=window.claude&&await window.claude.use('db')}catch(e){}
+ if(!db){$('#v').innerHTML='<div class=card><h3>Open in claude.ai</h3><p class=mut>ProxyProof saves its data in claude.ai shared storage. Open this link while signed in to claude.ai, on every phone or laptop that takes part.</p></div>';return}
+ const sub=(c,f)=>db.collection(c).onSnapshot(sn=>{const o={};sn.docs.forEach(d=>o[d.id]=d.data());f(o);ready=1;refresh()},()=>{});
+ sub('users',o=>U=o);sub('sessions',o=>SES=o);sub('marks',o=>MK=o);sub('reqs',o=>RQ=o);
+ setInterval(tick,1000);draw()}
+
+/* ---- rules (checked on every submit) ---- */
+async function submit(s,token,uid,dev,r){
+ const now=Date.now(),u=U[uid],mk=s&&marksOf(s.id);
+ if(!s||!s.active||now>s.end)return{ok:0,msg:'Session is not open'};
+ if(!u||u.role!='stu')return{ok:0,msg:'Student is not registered'};
+ if(mk[uid])return{ok:1,msg:'Already marked'};
+ if(u.dev!==dev)return{ok:0,msg:'Rejected: not the registered device'};
+ if(Object.values(mk).some(m=>m.dev===dev))return{ok:0,msg:'Rejected: this device already marked another student'};
+ if(!(token===s.tok||token===s.prev))return{ok:0,msg:'Rejected: token expired or replayed'};
+ if(r<TH)return{ok:0,msg:'Rejected: too far away ('+r+' dBm)'};
+ await W('marks/'+s.id+'_'+uid,{sid:s.id,uid,t:now,how:'auto',dev});return{ok:1,msg:u.name+' marked present'}}
+
+/* ---- account ---- */
+function login(id,pin,skip){id=(id||'').trim().toUpperCase();const u=U[id];if(!u)return toast('ID not found. Register first.');
+ if(!skip&&u.pin!==H(pin||''))return toast('Wrong PIN. Try again.');
+ if(u.role=='stu'){if(!u.dev)W('users/'+id,{...u,dev:DEV});else if(u.dev!==DEV){
+  W('reqs/'+id+'_'+DEV,{id,dev:DEV});return toast('New phone detected. Request sent to the organiser.')}}
+ me=id;ls('pp_me',id);tab=u.role=='org'?'session':'in';draw()}
+async function register(){const id=$('#rid').value.trim().toUpperCase(),n=$('#rn').value.trim(),role=$('#rr').value,p=$('#rpin').value;
+ if(!n||!/^[A-Z0-9_-]{2,20}$/.test(id))return toast('Enter your name and an ID (letters and numbers)');if(U[id])return toast('That ID is already registered');
+ if(!/^\d{4,6}$/.test(p))return toast('PIN must be 4 to 6 digits');
+ if(role=='org'&&Object.values(U).some(u=>u.role=='org'))return toast('An organiser already exists. Register as a student.');
+ if(role=='stu'&&stus().some(u=>u.dev===DEV))return toast('This phone is already bound to another student');
+ await W('users/'+id,{id,name:n,role,pin:H(p),...(role=='stu'?{dev:DEV}:{})});U[id]={id,name:n,role,pin:H(p),dev:DEV};login(id,null,1)}
+const out=()=>{me=null;ls('pp_me',null);draw()};
+function unbind(id){W('users/'+id,{...U[id],dev:null});toast('Device unbound')}
+async function resolve(k,ok){const r=RQ[k];if(ok)await W('users/'+r.id,{...U[r.id],dev:r.dev});db.doc('reqs/'+k).delete();toast(ok?'Device approved':'Request rejected')}
+
+/* ---- organiser ---- */
+function start(){if(act())return;const m=+$('#dur').value,id='s'+Date.now();
+ W('sessions/'+id,{id,title:$('#ttl').value||'Club session',start:Date.now(),end:Date.now()+m*6e4,active:true,tok:rnd(6),prev:'',tokAt:Date.now(),by:me})}
+function closeS(){const s=act();if(s){W('sessions/'+s.id,{...s,active:false,end:Date.now()});toast('Session closed')}}
+function man(id,add){const s=act();if(!s)return;if(add)W('marks/'+s.id+'_'+id,{sid:s.id,uid:id,t:Date.now(),how:'manual',dev:'manual'});else db.doc('marks/'+s.id+'_'+id).delete()}
+function csv(){const c=closed(),rows=[['Student ID','Name',...c.map(s=>s.title+' '+new Date(s.start).toLocaleDateString()),'Percent']];
+ stus().forEach(u=>rows.push([u.id,u.name,...c.map(s=>MK[s.id+'_'+u.id]?'P':'A'),pct(u.id)+'%']));
+ const t=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+ $('#csv').innerHTML=`<div class=card><h3>CSV export</h3><textarea id=ct readonly></textarea><button class=w style="margin-bottom:8px" onclick="dl()">Download .csv file</button><button class="g w" onclick="ct.select();try{navigator.clipboard.writeText(ct.value);toast('Copied')}catch(e){document.execCommand('copy')}">Copy CSV</button></div>`;$('#ct').value=t}
+async function dl(){try{const d=window.claude&&await window.claude.use('downloads');if(!d)return toast('Download unavailable. Use Copy.');await d.save({filename:'attendance.csv',data:$('#ct').value})}catch(e){if(e&&e.code!='declined')toast('Download failed. Use Copy.')}}
+async function lab(kind){const u=U[labU],s=act();if(!u)return toast('Register a student first');if(!s)return toast('Start a session first');
+ let dv=u.dev||'lab-'+u.id,tk=s.tok,r=rssi(dist);
+ if(kind=='replay')tk=oldT[oldT.length-3]||'XXXXXX';if(kind=='friend')dv='friend-phone';if(kind=='far')r=rssi(40);
+ const res=await submit(s,tk,u.id,dv,r);LOG.unshift({u:u.name,...res});LOG=LOG.slice(0,6);draw()}
+
+/* ---- views ---- */
+function draw(){document.title=me&&me_()?me_().name+' · ProxyProof':'ProxyProof';
+ const v=$('#v'),nav=$('#nav');$('#who').innerHTML=me&&me_()?`<span class=mut>${esc(me_().name)}</span> <button class="s" onclick="out()">Sign out</button>`:'';
+ if(!ready){v.innerHTML='<div class=card><p class=mut>Loading…</p></div>';return}
+ if(me&&!me_()){me=null}
+ if(!me){nav.innerHTML='';const first=!Object.values(U).some(u=>u.role=='org');
+  v.innerHTML=`<div class=card><h2 style="font-size:28px">Attendance that can't be faked</h2><p class=mut>Nearby phones are marked automatically. Borrowed phones and shared codes don't work.</p>
+  <p class=mut>Testing with several tabs? Each tab acts as its own phone. Register the organiser in one tab and a student in each other tab. <a href="${location.href}" target=_blank rel=noopener>Open another tab</a></p><div class=tabs><button class="${mode=='in'?'on':''}" onclick="mode='in';draw()">Sign in</button><button class="${mode=='up'?'on':''}" onclick="mode='up';draw()">Register</button></div>
+  ${mode=='in'?`<label>ID</label><input id=lid autocapitalize=characters><label>PIN</label><input id=lpin type=password inputmode=numeric maxlength=6><button class=w onclick="login(lid.value,lpin.value)">Sign in</button>`
+  :`${first?'<p class=mut>You are first here. Create the organiser account.</p>':''}<label>Full name</label><input id=rn><label>ID (roll number or username)</label><input id=rid autocapitalize=characters><label>4 to 6 digit PIN</label><input id=rpin type=password inputmode=numeric maxlength=6><label>Role</label><select id=rr><option value=stu ${first?'':'selected'}>Student</option><option value=org ${first?'selected':''}>Organiser</option></select><button class=w onclick="register()">Create account</button><p class=mut>Students are bound to the phone they register on.</p>`}</div>`;return}
+ const org=me_().role=='org',T=org?[['session','Session'],['hist','History'],['dev','Devices'],['lab','Test lab']]:[['in','Check in'],['rec','My record']],n=Object.keys(RQ).length;
+ nav.innerHTML='<nav><div>'+T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';draw()">${t[1]}${t[0]=='dev'&&n?' ('+n+')':''}</button>`).join('')+'</div></nav>';
+ v.innerHTML=({session:vSession,hist:vHist,dev:vDev,lab:vLab,in:vIn,rec:vRec})[tab]();
+ if(tab=='session'||tab=='in')live(1)}
+function refresh(){if(!ready)return;if(!me||!me_()){if(ready&&!$('#lid')&&!$('#rn'))draw();return}if(tab=='lab')return;if(tab=='session'||tab=='in')live(1);else draw()}
+function vSession(){const s=act();if(!s)return`<div class=card><div class=radar><b></b><b></b><b></b><div class="core off">Idle</div></div><h3>Start a session</h3><label>Title</label><input id=ttl placeholder="Weekly meetup"><label>Broadcast for</label><select id=dur><option value=1>1 minute</option><option value=5 selected>5 minutes</option><option value=10>10 minutes</option><option value=30>30 minutes</option></select><button class=w onclick="start()">Start broadcasting</button></div>`;
+ return`<div class=card><div class="radar on"><b></b><b></b><b></b><div class=core>Live</div></div><div class=row><div><h3>${esc(s.title)}</h3><span class=mut>Closes in <b id=left></b></span></div><span class="pill ok" id=cnt></span></div><p></p>
+ <div class=tok id=tk></div><div class=bar><i id=tb></i></div><p class=mut style="text-align:center;margin:8px 0 0">Token changes every 5 seconds</p></div>
+ <div class=card><h3>Live roster</h3><div id=ros></div><div class=row style="margin-top:12px"><select id=addsel style="margin:0"></select><button class=g onclick="addsel.value&&man(addsel.value,1)">Add</button></div></div><button class="r w" onclick="closeS()">Close session</button>`}
+function roster(){const s=act(),e=$('#ros');if(!s||!e)return;const mk=marksOf(s.id),ids=Object.keys(mk);
+ $('#cnt').textContent=ids.length+' / '+stus().length+' present';
+ e.innerHTML=ids.length?ids.map(i=>`<div class=li><span class=who>${av(U[i]?.name)}<span>${esc(U[i]?.name)}<br><span class=mut>${esc(i)}</span></span></span><span><span class="pill ${mk[i].how=='auto'?'ok':''}">${mk[i].how}</span> <button class="r s" onclick="man('${esc(i)}',0)">Remove</button></span></div>`).join(''):'<p class=mut>Waiting for nearby students. They are marked automatically.</p>';
+ const v=$('#addsel').value;$('#addsel').innerHTML='<option value="">Add manually…</option>'+stus().filter(u=>!mk[u.id]).map(u=>`<option value="${esc(u.id)}">${esc(u.name)} · ${esc(u.id)}</option>`).join('');$('#addsel').value=v}
+function vHist(){const c=closed().slice().reverse(),st=stus();return`<div class=card><div class=row><h3>Past sessions</h3><button class="g s" onclick="csv()">Export CSV</button></div>${c.length?c.map(s=>`<div class=li><span>${esc(s.title)}<br><span class=mut>${new Date(s.start).toLocaleString()}</span></span><span class=pill>${Object.keys(marksOf(s.id)).length}/${st.length}</span></div>`).join(''):'<p class=mut>No sessions yet. Closed sessions appear here.</p>'}</div><div id=csv></div>
+ <div class=card><h3>Student percentages</h3>${st.length?st.map(u=>`<div class=li><span class=who>${av(u.name)}${esc(u.name)}</span><span class="pill ${pct(u.id)<75?'bad':'ok'}">${pct(u.id)}%</span></div>`).join(''):'<p class=mut>No students registered yet.</p>'}</div>`}
+function vDev(){const k=Object.keys(RQ);return`<div class=card><h3>Device approvals</h3>${k.length?k.map(i=>`<div class=li><span>${esc(U[RQ[i].id]?.name)}<br><span class=mut>wants a new phone</span></span><span><button class=s onclick="resolve('${esc(i)}',1)">Approve</button> <button class="r s" onclick="resolve('${esc(i)}',0)">Reject</button></span></div>`).join(''):'<p class=mut>No requests. Students stay on one phone until you approve a change.</p>'}</div>
+ <div class=card><h3>Students</h3>${stus().length?stus().map(u=>`<div class=li><span class=who>${av(u.name)}${esc(u.name)}</span><span><span class="pill ${u.dev?'ok':'bad'}">${u.dev?'bound':'not bound'}</span> ${u.dev?`<button class="r s" onclick="unbind('${esc(u.id)}')">Unbind</button>`:''}</span></div>`).join(''):'<p class=mut>Students appear here after they register.</p>'}</div>`}
+function vLab(){const s=act(),st=stus();if(!labU&&st[0])labU=st[0].id;return`<div class=card><h3>Try to cheat</h3><p class=mut>${s?'Pick a student and see how the rules respond.':'Start a session first.'}</p><label>Student</label><select onchange="labU=this.value">${st.map(u=>`<option value="${esc(u.id)}" ${u.id==labU?'selected':''}>${esc(u.name)}</option>`).join('')}</select>
+ <label>Distance: <b id=dl>${dist}</b> m</label><input type=range min=1 max=40 value=${dist} oninput="dist=+this.value;dl.textContent=dist" style="padding:0">
+ <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr"><button onclick="lab('ok')">Genuine scan</button><button class=g onclick="lab('replay')">Replay old token</button><button class=g onclick="lab('friend')">Friend's phone</button><button class=g onclick="lab('far')">From outside</button></div></div>
+ <div class=card><h3>Result log</h3>${LOG.length?LOG.map(l=>`<div class=li><span>${esc(l.u)}: ${esc(l.msg)}</span><span class="pill ${l.ok?'ok':'bad'}">${l.ok?'OK':'No'}</span></div>`).join(''):'<p class=mut>Nothing yet.</p>'}</div>`}
+function vIn(){return`<div class=card style="text-align:center"><div class=radar id=rd><b></b><b></b><b></b><div class="core off" id=core>…</div></div><h3 id=st></h3><p class=mut id=sd></p></div>
+ <div class=card><label>Simulated distance from organiser: <b id=dl>${dist}</b> m</label><input type=range min=1 max=40 value=${dist} oninput="dist=+this.value;dl.textContent=dist;live()" style="padding:0"><p class=mut>Signal strength: <b id=rs></b> dBm. You are marked automatically within about 10 m.</p></div>`}
+function vRec(){const u=me_(),c=closed().slice().reverse();return`<div class=card style="text-align:center"><div class=big style="color:var(--${pct(u.id)<75?'bad':'ok'})">${pct(u.id)}%</div><p class=mut>attendance over ${c.length} sessions</p></div><div class=card><h3>History</h3>${c.length?c.map(s=>`<div class=li><span>${esc(s.title)}<br><span class=mut>${new Date(s.start).toLocaleDateString()}</span></span><span class="pill ${MK[s.id+'_'+u.id]?'ok':'bad'}">${MK[s.id+'_'+u.id]?'Present':'Absent'}</span></div>`).join(''):'<p class=mut>No sessions yet.</p>'}</div>`}
+
+/* ---- ticking ---- */
+async function tick(){if(!me||!me_())return;const s=Object.values(SES).find(x=>x.active),now=Date.now();
+ if(me_().role=='org'&&s&&s.by==me){
+  if(now>s.end){await W('sessions/'+s.id,{...s,active:false});return}
+  if(now-s.tokAt>=ROT&&!tick.b){tick.b=1;oldT.push(s.tok);await W('sessions/'+s.id,{...s,prev:s.tok,tok:rnd(6),tokAt:now});tick.b=0}}
+ live()}
+function live(force){if(!me||!me_())return;const s=act(),now=Date.now(),u=me_();
+ if(u.role=='org'&&tab=='session'){
+  if(!s&&$('#left'))return draw();if(s&&!$('#left'))return draw();
+  if(s){$('#left').textContent=fmt(s.end-now);$('#tk').textContent=s.tok;$('#tb').style.width=Math.max(0,100*(1-(now-s.tokAt)/ROT))+'%';
+   const n=Object.keys(marksOf(s.id)).length;if(force||$('#cnt').dataset.n!=n+'/'+Object.keys(U).length){roster();$('#cnt').dataset.n=n+'/'+Object.keys(U).length}}}
+ if(u.role=='stu'&&tab=='in'&&$('#st')){const r=rssi(dist);$('#rs').textContent=r;let c='off',t='No session nearby',d='Keep this screen open. You will be marked automatically.',on=0;
+  if(s){on=1;if(marksOf(s.id)[u.id]){c='ok';t='You are marked present';d='Nothing more to do.'}
+   else if(!busy){busy=1;submit(s,s.tok,u.id,DEV,r).then(res=>{busy=0;if(res.ok){toast('Attendance marked');live()}else{LOG[0]=res;live()}})}
+   if(!marksOf(s.id)[u.id]){c='bad';t='Signal found, not marked yet';d=(LOG[0]&&!LOG[0].ok?LOG[0].msg:'Checking…')}}
+  $('#core').className='core '+c;$('#core').textContent={ok:'Present',bad:'Blocked',off:'Idle'}[c];$('#rd').className='radar'+(on?' on':'');$('#st').textContent=t;$('#sd').textContent=d}}
+init();
+</script></body></html>
